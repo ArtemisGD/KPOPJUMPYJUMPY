@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    
     private Rigidbody2D _rigidbody;
     public float moveSpeed;
     public float jumpForce;
@@ -19,16 +20,30 @@ public class PlayerController : MonoBehaviour
 
     //Respawn
     private Vector3 resetPos;
-   
+    public Inventory inventory;
+
+    //Creamos un timer para el nuevo efecto
+    float timer = 0;
+    public float maxTime; // A esta variable le vas a dar tiempo por fuera para asignar la duración del poder
+    public bool isShieldOn = false;
+
     public void ResetPlayerPosition()
     {
         transform.position = resetPos;
     }
 
+
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         resetPos = transform.position;
+
+        inventory = GetComponent<Inventory>();
+        inventory.Init();
+
+        //Aquí le asignamos el tiempo que pusiste desde unity para en caso agarres el objeto, este tiempo empiece a correr
+        timer = maxTime;
+    
     }
 
     void Update()
@@ -39,6 +54,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
+        }
+        //Esto lo vamos a cambiar cuando colisione con un objeto (en el script Shield...)
+        if (isShieldOn)
+        {
+            Shield();
         }
     }
 
@@ -80,5 +100,22 @@ public class PlayerController : MonoBehaviour
     {
         //By rotations
         transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
+    }
+
+    //Función Shield
+    void Shield()
+    {
+        //Asignamos el nuevo tag
+        gameObject.tag = "Shield";
+        //El contador del timer baja (esto indica que la duración de la habilidad esta limitada por tiempo)
+        timer -= Time.deltaTime;
+
+        //Cuando el timer es 0 o menor que 0
+        if (timer <= 0)
+        {
+            //Le devolvemos el tag a player
+            gameObject.tag = "Player";
+            isShieldOn = false;
+        }
     }
 }

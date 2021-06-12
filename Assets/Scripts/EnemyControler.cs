@@ -25,4 +25,16 @@ public class EnemyControler : MonoBehaviour
     {
         transform.eulerAngles = new Vector3(0, direction == 1 ? 180 : 0,  0);
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.GetComponent<PlayerController>().ResetPlayerPosition();
+        }
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            direction = direction * -1;
+            FlipSprite();
+        }
+    }
 }
