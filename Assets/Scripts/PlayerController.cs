@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     //Respawn
     private Vector3 resetPos;
     public Inventory inventory;
+    public PlayerHealth playerHealth;
 
     //Creamos un timer para el nuevo efecto
     float timer = 0;
@@ -40,6 +41,9 @@ public class PlayerController : MonoBehaviour
 
         inventory = GetComponent<Inventory>();
         inventory.Init();
+
+        playerHealth = GetComponent<PlayerHealth>();
+        playerHealth.Init();
 
         //Aquí le asignamos el tiempo que pusiste desde unity para en caso agarres el objeto, este tiempo empiece a correr
         timer = maxTime;

@@ -30,6 +30,7 @@ public class EnemyControler : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<PlayerController>().ResetPlayerPosition();
+            collision.gameObject.GetComponent<PlayerController>().playerHealth.UpdateHealthBar_Damage();
         }
         if (collision.gameObject.CompareTag("Wall"))
         {
