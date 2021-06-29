@@ -7,34 +7,65 @@ public class EnemyControler : MonoBehaviour
     public float moveSpeed;
     private Rigidbody2D _rigidbody;
     public int direction = 0;
-  
-    // Start is called before the first frame update
+
+    float timer;
+    public float maxTime;
+    bool canMove;
+
+    public Sprite inconsciente;
+    public Sprite normal;
+
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
-        FlipSprite(); 
+        FlipSprite();
+
+        timer = maxTime;
+        canMove = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        _rigidbody.velocity = new Vector2(x: direction * moveSpeed, _rigidbody.velocity.y);
+        if (canMove)
+        {
+            Move();
+        }
+        else
+        {
+            timer -= Time.deltaTime;
+            if (timer < 0)
+            {
+                canMove = true;
+                gameObject.layer = 0;
+                GetComponent<SpriteRenderer>().sprite = normal;
+                timer = maxTime;
+            }
+        }
+    }
+
+    public void StopMoving()
+    {
+        canMove = false;
+        gameObject.layer = 9;
+        _rigidbody.velocity = Vector2.zero;
+        GetComponent<SpriteRenderer>().sprite = inconsciente;
+    }
+
+    void Move()
+    {
+        _rigidbody.velocity = new Vector2(direction * moveSpeed, _rigidbody.velocity.y);
     }
 
     void FlipSprite()
     {
-        transform.eulerAngles = new Vector3(0, direction == 1 ? 180 : 0,  0);
+        transform.eulerAngles = new Vector3(0, direction == 1 ? 180 : 0, 0);
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Wall"))
         {
-            collision.gameObject.GetComponent<PlayerController>().ResetPlayerPosition();
-            collision.gameObject.GetComponent<PlayerController>().playerHealth.UpdateHealthBar_Damage();
-        }
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            direction = direction * -1;
+            direction *= -1;
             FlipSprite();
         }
     }
